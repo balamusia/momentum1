@@ -1,0 +1,54 @@
+<body>
+
+<div id="draggable" style="position: absolute; top: 50px; left: 50px; width: 100px; height: 100px; background-color: red;"></div>
+<div class="moveable" style="position: absolute; top: 150px; left: 150px; width: 50px; height: 50px; background-color: blue;"></div>
+<div class="moveable" style="position: absolute; top: 200px; left: 200px; width: 50px; height: 50px; background-color: green;"></div>
+
+
+</body>
+
+<script>
+
+const draggable = document.getElementById('draggable');
+let isDragging = false;
+let mouseDownX = 0;
+let mouseDownY = 0;
+let offsetX = 0;
+let offsetY = 0;
+
+draggable.addEventListener('mousedown', function(e) {
+  isDragging = true;
+  mouseDownX = e.clientX;
+  mouseDownY = e.clientY;
+  offsetX = draggable.offsetLeft;
+  offsetY = draggable.offsetTop;
+});
+
+document.addEventListener('mousemove', function(e) {
+  if (isDragging) {
+    const deltaX = e.clientX - mouseDownX;
+    const deltaY = e.clientY - mouseDownY;
+    draggable.style.left = `${offsetX + deltaX}px`;
+    draggable.style.top = `${offsetY + deltaY}px`;
+    
+    const moveables = document.querySelectorAll('.moveable');
+    for (let i = 0; i < moveables.length; i++) {
+      const moveable = moveables[i];
+      const prevX = parseFloat(moveable.getAttribute('data-prev-x') || moveable.style.left);
+      const prevY = parseFloat(moveable.getAttribute('data-prev-y') || moveable.style.top);
+      const newX = prevX + deltaX;
+      const newY = prevY + deltaY;
+      moveable.style.left = `${newX}px`;
+      moveable.style.top = `${newY}px`;
+      moveable.setAttribute('data-prev-x', newX);
+      moveable.setAttribute('data-prev-y', newY);
+    }
+  }
+});
+
+document.addEventListener('mouseup', function(e) {
+  isDragging = false;
+});
+
+
+</script>
